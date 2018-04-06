@@ -56,6 +56,16 @@ class SearchProblem:
      """
      util.raiseNotDefined()
            
+class Node:
+  def __init__(self, state, action, cost, parent):
+    self.state = state
+    self.action = action
+    self.cost = cost
+    self.parent = parent
+    
+  def __str__(self):
+    return str(self.state) + ", " + str(self.action) + ", " + str(self.cost)
+
 
 def tinyMazeSearch(problem):
   """
@@ -66,6 +76,58 @@ def tinyMazeSearch(problem):
   s = Directions.SOUTH
   w = Directions.WEST
   return  [s,s,w,s,w,w,s,w]
+
+
+def graphSearchDfs(problem):
+  """
+  Graph Search genenric implementation
+
+  print "Start:", problem.getStartState()
+  print "Is the start a goal?", problem.isGoalState(problem.getStartState())
+  print "Start's successors:", problem.getSuccessors(problem.getStartState())
+
+
+  print ', '.join("%s: %s" % item for item in node.items())
+  print(*myList, sep='\n')
+  """
+  frontier = util.Stack()
+  node = Node(problem.getStartState(), None, None, None)
+  frontier.push(node)
+  explored = []
+  while True:
+    if frontier.isEmpty():
+      return "ERROR"
+    node = frontier.pop()
+    # raw_input("Press Enter to continue...")
+    # print "Exploring node: ", node
+    if(problem.isGoalState(node.state)):
+      sol = solution(node)
+      # print "Solution is: ", sol
+      return sol
+    explored.append(node.state)
+    #print "Explored:" , explored
+    successors = problem.getSuccessors(node.state)
+    #print "new successors:", successors
+    for successor in successors:
+      newNode = Node(successor[0], successor[1], successor[2], node)
+      if (newNode.state not in explored) and (newNode not in frontier.list) :
+        frontier.push(newNode)
+        # print "New node pushed: ", newNode
+      #else:
+        # print "node not pushed: ", newNode
+      
+      
+
+def solution(node):
+  """
+  returns an actions list represent a solution from a gole state node.
+  """
+  actions = []
+  while node != None and node.action != None:
+    actions.append(node.action)
+    node = node.parent
+  actions.reverse()  
+  return actions
 
 def depthFirstSearch(problem):
   """
@@ -81,11 +143,7 @@ def depthFirstSearch(problem):
   print "Is the start a goal?", problem.isGoalState(problem.getStartState())
   print "Start's successors:", problem.getSuccessors(problem.getStartState())
   """
-  "*** YOUR CODE HERE ***"
-  print "Start:", problem.getStartState()
-  print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-  print "Start's successors:", problem.getSuccessors(problem.getStartState())
-  util.raiseNotDefined()
+  return graphSearchDfs(problem)
 
 def breadthFirstSearch(problem):
   "Search the shallowest nodes in the search tree first. [p 74]"
