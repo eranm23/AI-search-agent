@@ -11,9 +11,11 @@
             "program": "${workspaceFolder}/pacman.py",
             "args": [
                 "-l",
-                "tinyMaze",
+                "mediumMaze",
                 "-p",
-                "SearchAgent"
+                "SearchAgent",
+                "-a",
+                "fn=bfs"
             ]
         },
         {

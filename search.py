@@ -13,6 +13,7 @@ by Pacman agents (in searchAgents.py).
 
 import util
 
+
 class SearchProblem:
   """
   This class outlines the structure of a search problem, but doesn't implement
@@ -80,15 +81,7 @@ def tinyMazeSearch(problem):
 
 def graphSearchDfs(problem):
   """
-  Graph Search genenric implementation
-
-  print "Start:", problem.getStartState()
-  print "Is the start a goal?", problem.isGoalState(problem.getStartState())
-  print "Start's successors:", problem.getSuccessors(problem.getStartState())
-
-
-  print ', '.join("%s: %s" % item for item in node.items())
-  print(*myList, sep='\n')
+  Graph Search DFS implementation
   """
   frontier = util.Stack()
   node = Node(problem.getStartState(), None, None, None)
@@ -96,16 +89,16 @@ def graphSearchDfs(problem):
   explored = []
   while True:
     if frontier.isEmpty():
-      return "ERROR"
+      return "ERROR in graphSearchDfs method"
+      sys.exit(1)
     node = frontier.pop()
-    # raw_input("Press Enter to continue...")
+    
     # print "Exploring node: ", node
+    # raw_input("Press Enter to continue...")
     if(problem.isGoalState(node.state)):
       sol = solution(node)
-      # print "Solution is: ", sol
       return sol
-    explored.append(node.state)
-    #print "Explored:" , explored
+    
     successors = problem.getSuccessors(node.state)
     #print "new successors:", successors
     for successor in successors:
@@ -115,6 +108,54 @@ def graphSearchDfs(problem):
         # print "New node pushed: ", newNode
       #else:
         # print "node not pushed: ", newNode
+        
+    explored.append(node.state)
+    #print "Explored:" , explored
+
+def graphSearch(problem, searchType = "dfs"):
+  """
+  Graph Search  implementation
+  serachType is string define the search type.
+  searchType options are:
+     "dfs" for deep first search,
+     "bfs" for bread first search
+
+  """
+  print "Running graphSearch function with search type: ", bfs
+  if(searchType is "bfs"): frontier = util.Queue()
+  else: frontier = util.Stack()
+  node = Node(problem.getStartState(), None, None, None)
+  frontier.push(node)
+  explored = []
+  while True:
+    if frontier.isEmpty():
+      return "ERROR in graphSearchBfs method"
+      sys.exit(1)
+    node = frontier.pop()
+    if(searchType is "dfs"):
+      if(problem.isGoalState(node.state)):
+        sol = solution(node)
+        return sol
+
+    # print "Exploring node: ", node
+    # raw_input("Press Enter to continue...")
+    
+    successors = problem.getSuccessors(node.state)
+    # print "new successors:", successors
+    for successor in successors:
+      newNode = Node(successor[0], successor[1], successor[2], node)
+      if (newNode.state not in explored) and (newNode not in frontier.list) :
+        if(searchType is "bfs"):
+          if(problem.isGoalState(newNode.state)):
+            sol = solution(newNode)
+            return sol
+        frontier.push(newNode)
+      #   print "New node pushed: ", newNode
+      # else:
+      #   print "node not pushed: ", newNode
+    
+    explored.append(node.state)
+    # print "Explored:" , explored
       
       
 
@@ -143,12 +184,11 @@ def depthFirstSearch(problem):
   print "Is the start a goal?", problem.isGoalState(problem.getStartState())
   print "Start's successors:", problem.getSuccessors(problem.getStartState())
   """
-  return graphSearchDfs(problem)
+  return graphSearch(problem, "dfs")
 
 def breadthFirstSearch(problem):
   "Search the shallowest nodes in the search tree first. [p 74]"
-  "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+  return graphSearch(problem, "bfs")
       
 def uniformCostSearch(problem):
   "Search the node of least total cost first. "
