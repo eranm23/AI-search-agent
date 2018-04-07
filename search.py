@@ -79,97 +79,9 @@ def tinyMazeSearch(problem):
   return  [s,s,w,s,w,w,s,w]
 
 
-def graphSearchDfs(problem):
-  """
-  Graph Search DFS implementation
-  """
-  frontier = util.Stack()
-  node = Node(problem.getStartState(), None, None, None)
-  frontier.push(node)
-  explored = []
-  while True:
-    if frontier.isEmpty():
-      return "ERROR in graphSearchDfs method"
-      sys.exit(1)
-    node = frontier.pop()
-    
-    # print "Exploring node: ", node
-    # raw_input("Press Enter to continue...")
-    if(problem.isGoalState(node.state)):
-      sol = solution(node)
-      return sol
-    
-    successors = problem.getSuccessors(node.state)
-    #print "new successors:", successors
-    for successor in successors:
-      newNode = Node(successor[0], successor[1], successor[2], node)
-      if (newNode.state not in explored) and (newNode not in frontier.list) :
-        frontier.push(newNode)
-        # print "New node pushed: ", newNode
-      #else:
-        # print "node not pushed: ", newNode
-        
-    explored.append(node.state)
-    #print "Explored:" , explored
 
-def graphSearch(problem, searchType = "dfs"):
-  """
-  Graph Search  implementation
-  serachType is string define the search type.
-  searchType options are:
-     "dfs" for deep first search,
-     "bfs" for bread first search
 
-  """
-  print "Running graphSearch function with search type: ", bfs
-  if(searchType is "bfs"): frontier = util.Queue()
-  else: frontier = util.Stack()
-  node = Node(problem.getStartState(), None, None, None)
-  frontier.push(node)
-  explored = []
-  while True:
-    if frontier.isEmpty():
-      return "ERROR in graphSearchBfs method"
-      sys.exit(1)
-    node = frontier.pop()
-    if(searchType is "dfs"):
-      if(problem.isGoalState(node.state)):
-        sol = solution(node)
-        return sol
-
-    # print "Exploring node: ", node
-    # raw_input("Press Enter to continue...")
-    
-    successors = problem.getSuccessors(node.state)
-    # print "new successors:", successors
-    for successor in successors:
-      newNode = Node(successor[0], successor[1], successor[2], node)
-      if (newNode.state not in explored) and (newNode not in frontier.list) :
-        if(searchType is "bfs"):
-          if(problem.isGoalState(newNode.state)):
-            sol = solution(newNode)
-            return sol
-        frontier.push(newNode)
-      #   print "New node pushed: ", newNode
-      # else:
-      #   print "node not pushed: ", newNode
-    
-    explored.append(node.state)
-    # print "Explored:" , explored
-      
-      
-
-def solution(node):
-  """
-  returns an actions list represent a solution from a gole state node.
-  """
-  actions = []
-  while node != None and node.action != None:
-    actions.append(node.action)
-    node = node.parent
-  actions.reverse()  
-  return actions
-
+debug = False
 def depthFirstSearch(problem):
   """
   Search the deepest nodes in the search tree first [p 74].
@@ -184,16 +96,131 @@ def depthFirstSearch(problem):
   print "Is the start a goal?", problem.isGoalState(problem.getStartState())
   print "Start's successors:", problem.getSuccessors(problem.getStartState())
   """
-  return graphSearch(problem, "dfs")
+  frontier = util.Stack()
+  node = Node(problem.getStartState(), None, 0, None)
+  frontier.push(node)
+  explored = []
+  while True:
+    if frontier.isEmpty():
+      return "ERROR in depthFirstSearch function"
+      sys.exit(1)
+    node = frontier.pop()
+
+    if(debug): print "Exploring node: ", node
+    if(debug): raw_input("Press Enter to continue...")
+    
+    successors = problem.getSuccessors(node.state)
+    if(debug): print "new successors:", successors
+    for successor in successors:
+      childNode = Node(successor[0], successor[1], node.cost + successor[2], node)
+      if (childNode.state not in explored) and (childNode not in frontier.list) :
+        if(problem.isGoalState(childNode.state)):
+          sol = solution(childNode)
+          return sol
+        frontier.push(childNode)
+        if(debug): print "Child node pushed: ", childNode
+      else:
+        if(debug): print "Child node not pushed: ", childNode
+    
+    explored.append(node.state)
+    if(debug): print "Explored:" , explored
 
 def breadthFirstSearch(problem):
   "Search the shallowest nodes in the search tree first. [p 74]"
-  return graphSearch(problem, "bfs")
+
+  frontier = util.Queue()
+  node = Node(problem.getStartState(), None, 0, None)
+  frontier.push(node)
+  explored = []
+  while True:
+    if frontier.isEmpty():
+      return "ERROR in breadthFirstSearch function"
+      sys.exit(1)
+    node = frontier.pop()
+
+    if(debug): print "Exploring node: ", node
+    if(debug): raw_input("Press Enter to continue...")
+    
+    successors = problem.getSuccessors(node.state)
+    if(debug): print "new successors:", successors
+    for successor in successors:
+      childNode = Node(successor[0], successor[1], node.cost + successor[2], node)
+      if (childNode.state not in explored) and (childNode not in frontier.list) :
+        if(problem.isGoalState(childNode.state)):
+          sol = solution(childNode)
+          return sol
+        frontier.push(childNode)
+        if(debug): print "Child node pushed: ", childNode
+      else:
+        if(debug): print "Child node not pushed: ", childNode
+    
+    explored.append(node.state)
+    if(debug): print "Explored:" , explored
       
 def uniformCostSearch(problem):
   "Search the node of least total cost first. "
-  "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+  frontier = util.PriorityQueueWithFunction(calcPriority)
+  node = Node(problem.getStartState(), None, 0, None)
+  frontier.push(node)
+  explored = []
+  while True:
+    if frontier.isEmpty():
+      return "ERROR in uniformCostSearch function"
+      sys.exit(1)
+    node = frontier.pop()
+    if(problem.isGoalState(node.state)):
+      sol = solution(node)
+      return sol
+
+    if(debug): print "Exploring node: ", node
+    if(debug): raw_input("Press Enter to continue...")
+    
+    successors = problem.getSuccessors(node.state)
+    if(debug): print "new successors:", successors
+    for successor in successors:
+      childNode = Node(successor[0], successor[1], node.cost + successor[2], node)
+      if (childNode.state not in explored) and (childNode not in frontier.heap) :
+        frontier.push(childNode)
+        if(debug): print "Child node pushed: ", childNode
+      else:
+        if shouldAdd(childNode, frontier):
+          frontier.push(childNode)
+          if(debug): print "Chils node with less cost and need to therefore pushed: ", childNode
+        else:
+          if(debug): print "Child node not pushed: ", childNode
+    
+    explored.append(node.state)
+    if(debug): print "Explored:" , explored
+
+def solution(node):
+  """
+  returns an actions list represent a solution from a gole state node.
+  """
+  actions = []
+  while node != None and node.action != None:
+    actions.append(node.action)
+    node = node.parent
+  actions.reverse()  
+  return actions
+
+
+def shouldAdd(node, frontier):
+  """
+  Use only for UCS (uniform cost search) where frontier is priority queue.
+  Returns true if frontier contain node with same state and with greater cost,
+  otherwise returns false.
+  """
+  lst = frontier.heap
+  for tpl in lst:
+    if tpl[1].state == node.state and tpl[1].cost > node.cost:
+      return True
+  return False
+
+def calcPriority(node):
+  "Priority function for PriorityQueueWithFunction class usage"
+  return node.cost
+
+
 
 def nullHeuristic(state, problem=None):
   """
