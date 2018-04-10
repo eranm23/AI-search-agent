@@ -58,11 +58,13 @@ class SearchProblem:
      util.raiseNotDefined()
            
 class Node:
-  def __init__(self, state, action, cost, parent):
+  def __init__(self, state, action, cost, parent, problem=None, heuristic=None):
     self.state = state
     self.action = action
     self.cost = cost
     self.parent = parent
+    self.problem = problem
+    self.heuristic = heuristic
     
   def __str__(self):
     return str(self.state) + ", " + str(self.action) + ", " + str(self.cost)
@@ -220,6 +222,11 @@ def calcPriority(node):
   "Priority function for PriorityQueueWithFunction class usage"
   return node.cost
 
+def calcPriorityH(node):
+  "Priority function for PriorityQueueWithFunction class usage"
+  return node.cost + node.heuristic(node.state, node.problem)
+
+
 
 
 def nullHeuristic(state, problem=None):
@@ -231,8 +238,39 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
   "Search the node that has the lowest combined cost and heuristic first."
-  "*** YOUR CODE HERE ***"
-  util.raiseNotDefined()
+
+  frontier = util.PriorityQueueWithFunction(calcPriorityH)
+  node = Node(problem.getStartState(), None, 0, None, problem, heuristic)
+  frontier.push(node)
+  explored = []
+  while True:
+    if frontier.isEmpty():
+      return "ERROR in uniformCostSearch function"
+      sys.exit(1)
+    node = frontier.pop()
+    if(problem.isGoalState(node.state)):
+      sol = solution(node)
+      return sol
+
+    if(debug): print "Exploring node: ", node
+    if(debug): raw_input("Press Enter to continue...")
+    
+    successors = problem.getSuccessors(node.state)
+    if(debug): print "new successors:", successors
+    for successor in successors:
+      childNode = Node(successor[0], successor[1], node.cost + successor[2], node, problem, heuristic)
+      if (childNode.state not in explored) and (childNode not in frontier.heap) :
+        frontier.push(childNode)
+        if(debug): print "Child node pushed: ", childNode
+      else:
+        if shouldAdd(childNode, frontier):
+          frontier.push(childNode)
+          if(debug): print "Chils node with less cost and need to therefore pushed: ", childNode
+        else:
+          if(debug): print "Child node not pushed: ", childNode
+    
+    explored.append(node.state)
+    if(debug): print "Explored:" , explored
     
   
 # Abbreviations
