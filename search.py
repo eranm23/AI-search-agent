@@ -58,6 +58,7 @@ class SearchProblem:
      util.raiseNotDefined()
            
 class Node:
+
   def __init__(self, state, action, cost, parent, problem=None, heuristic=None):
     self.state = state
     self.action = action
@@ -68,6 +69,12 @@ class Node:
     
   def __str__(self):
     return str(self.state) + ", " + str(self.action) + ", " + str(self.cost)
+  
+  def __eq__(self, node):
+    return self.action == node.action and self.state == node.state and self.cost == node.cost
+  # def __repr__(self):
+  #   return str(self.state) + ", " + str(self.action) + ", " + str(self.cost)
+
 
 
 def tinyMazeSearch(problem):
@@ -79,6 +86,7 @@ def tinyMazeSearch(problem):
   s = Directions.SOUTH
   w = Directions.WEST
   return  [s,s,w,s,w,w,s,w]
+
 
 
 
@@ -104,7 +112,7 @@ def depthFirstSearch(problem):
   explored = []
   while True:
     if frontier.isEmpty():
-      return "ERROR in depthFirstSearch function"
+      print "ERROR in depthFirstSearch function: frontier is empty!"
       sys.exit(1)
     node = frontier.pop()
 
@@ -125,7 +133,7 @@ def depthFirstSearch(problem):
         if(debug): print "Child node not pushed: ", childNode
     
     explored.append(node.state)
-    if(debug): print "Explored:" , explored
+    #if(debug): print "Explored:" , explored
 
 def breadthFirstSearch(problem):
   "Search the shallowest nodes in the search tree first. [p 74]"
@@ -136,7 +144,7 @@ def breadthFirstSearch(problem):
   explored = []
   while True:
     if frontier.isEmpty():
-      return "ERROR in breadthFirstSearch function"
+      print "ERROR in breadthFirstSearch function: frontier is empty!"
       sys.exit(1)
     node = frontier.pop()
 
@@ -147,17 +155,21 @@ def breadthFirstSearch(problem):
     if(debug): print "new successors:", successors
     for successor in successors:
       childNode = Node(successor[0], successor[1], node.cost + successor[2], node)
-      if (childNode.state not in explored) and (childNode not in frontier.list) :
+      # if(childNode.state[0] == (7, 10)):
+      #   print ""
+      if (childNode.state not in explored) and (childNode not in frontier.list):
         if(problem.isGoalState(childNode.state)):
           sol = solution(childNode)
           return sol
         frontier.push(childNode)
         if(debug): print "Child node pushed: ", childNode
+        if(debug): print "Frontier:", len(frontier.list)
+        if(debug): print '|'.join(str(p) for p in frontier.list) 
       else:
         if(debug): print "Child node not pushed: ", childNode
     
     explored.append(node.state)
-    if(debug): print "Explored:" , explored
+    # if(debug): print "Explored:" , explored
       
 def uniformCostSearch(problem):
   "Search the node of least total cost first. "
@@ -167,7 +179,7 @@ def uniformCostSearch(problem):
   explored = []
   while True:
     if frontier.isEmpty():
-      return "ERROR in uniformCostSearch function"
+      print "ERROR in uniformCostSearch function: frontier is empty!"
       sys.exit(1)
     node = frontier.pop()
     if(problem.isGoalState(node.state)):
@@ -216,7 +228,7 @@ def shouldAdd(node, frontier):
   for tpl in lst:
     if tpl[1].state == node.state and tpl[1].cost > node.cost:
       return True
-  return False
+  return 
 
 def calcPriority(node):
   "Priority function for PriorityQueueWithFunction class usage"

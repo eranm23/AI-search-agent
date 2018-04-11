@@ -261,6 +261,8 @@ class CornersProblem(search.SearchProblem):
   This search problem finds paths through all four corners of a layout.
 
   You must select a suitable state space and successor function
+
+  State structure is a position and a list of non visited corners
   """
   
   def __init__(self, startingGameState):
@@ -280,13 +282,14 @@ class CornersProblem(search.SearchProblem):
     
   def getStartState(self):
     "Returns the start state (in your state space, not the full Pacman state space)"
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    "start state construct from startposition and list of all corner, since non of it visited yet."
+    return (self.startingPosition, list(self.corners))
     
   def isGoalState(self, state):
     "Returns whether this search state is a goal state of the problem"
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    x,y = state[0]
+    return len(state[1]) == 0
        
   def getSuccessors(self, state):
     """
@@ -308,6 +311,17 @@ class CornersProblem(search.SearchProblem):
       #   dx, dy = Actions.directionToVector(action)
       #   nextx, nexty = int(x + dx), int(y + dy)
       #   hitsWall = self.walls[nextx][nexty]
+      x,y = state[0]
+      nonVisitCorners = list(state[1])
+      dx, dy = Actions.directionToVector(action)
+      nextx, nexty = int(x + dx), int(y + dy)
+      hitsWall = self.walls[nextx][nexty]
+      if not hitsWall:
+        if((nextx,nexty) in nonVisitCorners):
+          nonVisitCorners.remove((nextx,nexty))
+        nextState = ((nextx, nexty),  nonVisitCorners)
+        cost = 1
+        successors.append( ( nextState, action, cost) )
       
       "*** YOUR CODE HERE ***"
       
