@@ -271,7 +271,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     if(debug): print "new successors:", successors
     for successor in successors:
       childNode = Node(successor[0], successor[1], node.cost + successor[2], node, problem, heuristic)
-      if (childNode.state not in explored) and (childNode not in frontier.heap) :
+      if (childNode.state not in explored) and  not isNodeInPriorityFrontier(childNode, frontier) :
         frontier.push(childNode)
         if(debug): print "Child node pushed: ", childNode
       else:
@@ -283,8 +283,12 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     
     explored.append(node.state)
     if(debug): print "Explored:" , explored
-    
-  
+
+def isNodeInPriorityFrontier(node, frontier):
+    for element in frontier.heap :
+      if element[1] == node:
+        return True
+    return False
 # Abbreviations
 bfs = breadthFirstSearch
 dfs = depthFirstSearch

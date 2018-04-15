@@ -28,13 +28,13 @@ project description for details.
 
 Good luck and happy searching!
 """
-from game import Directions
-from game import Agent
-from game import Actions
-import util
 import time
+
 import search
 import searchAgents
+import util
+from game import Actions, Agent, Directions
+
 
 class GoWestAgent(Agent):
   "An agent that goes West until it can't."
@@ -356,12 +356,48 @@ def cornersHeuristic(state, problem):
   it should be admissible.  (You need not worry about consistency for
   this heuristic to receive full credit.)
   """
+
   corners = problem.corners # These are the corner coordinates
   walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-  
-  "*** YOUR CODE HERE ***"
-  return 0 # Default to trivial solution
+  currentPos = state[0]
+  notExploredCorners = state[1]
+  if(len(notExploredCorners) == 0):
+    return 0
+  width = corners[2][0] - corners[1][0]
+  hieght = corners[1][1] - corners[0][1]
+  #Find the closest corner.
+  #shortDistance init with longest posible distance
+  shortDistance = width + hieght + 1
+  first2GoCorner = None
+  for corner in notExploredCorners:
+    tempVal = util.manhattanDistance(currentPos, corner)
+    if(tempVal < shortDistance):
+      first2GoCorner = corner
+      shortDistance = tempVal
 
+  if(len(notExploredCorners) == 1):
+    return shortDistance
+
+  if(len(notExploredCorners) == 4):
+    return shortDistance + hieght + width + hieght
+
+  if(len(notExploredCorners) == 2):
+    return shortDistance + util.manhattanDistance(notExploredCorners[0], notExploredCorners[1])
+
+  if(len(notExploredCorners) == 3):
+    #Chacking if the corner is the middle corner 
+    #and if it is find the second closest corner
+    if(notExploredCorners.index(first2GoCorner)):
+      shortDistance = width + hieght + 1
+      second2GoCorner = None
+      for corner in notExploredCorners:
+        if corner != first2GoCorner:
+          tempVal = util.manhattanDistance(currentPos, corner)
+          if(tempVal < shortDistance):
+            second2GoCorner = corner
+            shortDistance = tempVal
+    val = shortDistance + width + hieght
+  return val
 class AStarCornersAgent(SearchAgent):
   "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
   def __init__(self):
