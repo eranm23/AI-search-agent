@@ -5,6 +5,19 @@
     //-l tinyCorners -p SearchAgent -a fn=bfs,prob=CornersProblem
     "version": "0.2.0",
     "configurations": [
+        
+        {
+            "name": "Python:Pacsman-Food-Search",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/pacman.py",
+            "args": [
+                "-l",
+                "trickySearch",
+                "-p",
+                "AStarFoodSearchAgent",
+            ]
+        },
         {
             "name": "Python:Pacsman",
             "type": "python",
@@ -12,11 +25,13 @@
             "program": "${workspaceFolder}/pacman.py",
             "args": [
                 "-l",
-                "mediumCorners",
+                "bigMaze",
+                "-z",
+                "0.5",
                 "-p",
                 "SearchAgent",
                 "-a",
-                "fn=bfs,prob=CornersProblem"
+                "fn=astar,heuristic=manhattanHeuristic"
             ]
         },
         {
