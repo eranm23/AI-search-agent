@@ -13,7 +13,7 @@
             "program": "${workspaceFolder}/pacman.py",
             "args": [
                 "-l",
-                "trickySearch",
+                "testSearch",
                 "-p",
                 "AStarFoodSearchAgent",
             ]

@@ -485,9 +485,29 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount'] = problem.walls.count()
   Subsequent calls to this heuristic can access problem.heuristicInfo['wallCount']
   """
+
   position, foodGrid = state
-  "*** YOUR CODE HERE ***"
-  return 0
+  successors = problem.getSuccessors(state)
+  costSum = 0
+  cost = 0
+  for successor in successors:
+    # look into horizon
+    costSum = costSum + horizonHuristic(problem, position, foodGrid, successor[1], successor[2], successor[2])
+  if costSum != 0:
+    cost = costSum / len(successors)
+  return cost
+
+def horizonHuristic(problem, (x,y), foodGrid, direction, stepCost, foodPrize):
+  dx, dy = Actions.directionToVector(direction)
+  nextx, nexty = int(x + dx), int(y + dy)
+  cost = 0
+  if not problem.walls[nextx][nexty]:
+    cost += stepCost
+    if foodGrid[nextx][nexty]:
+      cost -= foodPrize
+    # nextx, nexty = int(nextx + dx), int(nexty + dy)
+  return cost
+
   
 class ClosestDotSearchAgent(SearchAgent):
   "Search for all food using a sequence of searches"
